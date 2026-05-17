@@ -19,7 +19,7 @@ app.use('/api/transactions', require('./routes/transactions'));
 
 // Database connection
 const PORT = process.env.PORT || 5001;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/library';
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/library';
 
 mongoose.connect(MONGODB_URI)
   .then(() => {
