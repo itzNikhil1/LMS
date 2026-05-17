@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { ArrowRightLeft, Calendar, Search } from 'lucide-react';
 
 const IssueReturn = () => {
@@ -15,7 +15,7 @@ const IssueReturn = () => {
 
   const fetchTransactions = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/transactions');
+      const res = await axios.get('/api/transactions');
       setTransactions(res.data);
       setLoading(false);
     } catch (err) {
@@ -37,7 +37,7 @@ const IssueReturn = () => {
     setError('');
     setSuccess('');
     try {
-      await axios.post('http://localhost:5001/api/transactions/issue', issueData);
+      await axios.post('/api/transactions/issue', issueData);
       setSuccess('Book issued successfully!');
       setIssueData({ ...issueData, studentIdStr: '', bookIdStr: '' });
       fetchTransactions();
@@ -51,7 +51,7 @@ const IssueReturn = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await axios.post('http://localhost:5001/api/transactions/return', returnData);
+      const res = await axios.post('/api/transactions/return', returnData);
       setSuccess(`Book returned successfully! Fine collected: $${res.data.fine}`);
       setReturnData({ issueId: '' });
       fetchTransactions();

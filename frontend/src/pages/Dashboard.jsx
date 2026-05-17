@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Book, Users, ArrowUpRight, DollarSign, Activity } from 'lucide-react';
 
 const StatCard = ({ title, value, icon, color, bgColor }) => (
@@ -26,7 +26,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('http://localhost:5001/api/dashboard/stats');
+        const res = await axios.get('/api/dashboard/stats');
         setStats(res.data);
         setLoading(false);
       } catch (err) {

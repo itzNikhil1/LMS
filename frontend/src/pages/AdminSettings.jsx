@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { UserPlus, Shield } from 'lucide-react';
 
 const AdminSettings = () => {
@@ -13,7 +13,7 @@ const AdminSettings = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const res = await axios.post('http://localhost:5001/api/auth/register', formData);
+      const res = await axios.post('/api/auth/register', formData);
       setMessage({ type: 'success', text: res.data.message });
       setFormData({ username: '', password: '' });
     } catch (err) {

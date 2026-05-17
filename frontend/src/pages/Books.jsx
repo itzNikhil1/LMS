@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Plus, Edit2, Trash2, X } from 'lucide-react';
 
 const Books = () => {
@@ -14,7 +14,7 @@ const Books = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/books');
+      const res = await axios.get('/api/books');
       setBooks(res.data);
       setLoading(false);
     } catch (err) {
@@ -36,9 +36,9 @@ const Books = () => {
     setError('');
     try {
       if (isEditing) {
-        await axios.put(`http://localhost:5001/api/books/${editId}`, formData);
+        await axios.put(`/api/books/${editId}`, formData);
       } else {
-        await axios.post('http://localhost:5001/api/books', formData);
+        await axios.post('/api/books', formData);
       }
       fetchBooks();
       handleClear();
@@ -64,7 +64,7 @@ const Books = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this book?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/books/${id}`);
+        await axios.delete(`/api/books/${id}`);
         fetchBooks();
       } catch (err) {
         console.error(err);

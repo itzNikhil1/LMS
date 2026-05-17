@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Search, Bell, User, LogOut, BookOpen, Users } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../api';
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
@@ -41,8 +41,8 @@ const Header = () => {
       setIsSearching(true);
       try {
         const [booksRes, studentsRes] = await Promise.all([
-          axios.get('http://localhost:5001/api/books'),
-          axios.get('http://localhost:5001/api/students')
+          axios.get('/api/books'),
+          axios.get('/api/students')
         ]);
         
         const q = searchQuery.toLowerCase();

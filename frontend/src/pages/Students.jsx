@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Plus, Edit2, Trash2, X, GraduationCap } from 'lucide-react';
 
 const Students = () => {
@@ -14,7 +14,7 @@ const Students = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/students');
+      const res = await axios.get('/api/students');
       setStudents(res.data);
       setLoading(false);
     } catch (err) {
@@ -36,9 +36,9 @@ const Students = () => {
     setError('');
     try {
       if (isEditing) {
-        await axios.put(`http://localhost:5001/api/students/${editId}`, formData);
+        await axios.put(`/api/students/${editId}`, formData);
       } else {
-        await axios.post('http://localhost:5001/api/students', formData);
+        await axios.post('/api/students', formData);
       }
       fetchStudents();
       handleClear();
@@ -63,7 +63,7 @@ const Students = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this student?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/students/${id}`);
+        await axios.delete(`/api/students/${id}`);
         fetchStudents();
       } catch (err) {
         console.error(err);

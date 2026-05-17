@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Calendar, Download, Printer, Filter } from 'lucide-react';
 
 const Reports = () => {
@@ -10,7 +10,7 @@ const Reports = () => {
 
   const fetchTransactions = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/transactions');
+      const res = await axios.get('/api/transactions');
       setTransactions(res.data);
       setLoading(false);
     } catch (err) {
