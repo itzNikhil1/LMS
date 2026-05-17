@@ -5,10 +5,8 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-  credentials: true
-}));
+// Allow all origins for easy deployment
+app.use(cors());
 app.use(express.json());
 // Routes (to be defined)
 app.use('/api/auth', require('./routes/auth'));
