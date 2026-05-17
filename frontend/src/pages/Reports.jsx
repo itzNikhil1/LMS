@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api';
 import { Calendar, Download, Printer, Filter } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 const Reports = () => {
   const [transactions, setTransactions] = useState([]);
@@ -23,10 +26,6 @@ const Reports = () => {
     fetchTransactions();
   }, []);
 
-  const handleExportMock = (type) => {
-    alert(`Mock: Generating ${type} report... (This feature requires a backend PDF/Excel library like pdfkit or exceljs)`);
-  };
-
   // Filter logic
   const filteredTransactions = transactions.filter(trx => {
     let typeMatch = true;
@@ -48,16 +47,67 @@ const Reports = () => {
     return typeMatch && dateMatch;
   });
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Library Transactions Report', 14, 15);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+
+    const tableColumn = ["Issue ID", "Student Name", "Book Title", "Issue Date", "Due Date", "Status", "Fine"];
+    const tableRows = [];
+
+    filteredTransactions.forEach(trx => {
+      const transactionData = [
+        trx.issueId,
+        trx.studentId?.name || 'Unknown',
+        trx.bookId?.title || 'Unknown',
+        new Date(trx.issueDate).toLocaleDateString(),
+        new Date(trx.dueDate).toLocaleDateString(),
+        trx.status,
+        trx.fine ? `$${trx.fine}` : '-'
+      ];
+      tableRows.push(transactionData);
+    });
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 30,
+    });
+
+    doc.save(`LMS_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const exportToExcel = () => {
+    const dataToExport = filteredTransactions.map(trx => ({
+      'Issue ID': trx.issueId,
+      'Student Name': trx.studentId?.name || 'Unknown',
+      'Student ID': trx.studentId?.studentId || 'Unknown',
+      'Book Title': trx.bookId?.title || 'Unknown',
+      'Book ID': trx.bookId?.bookId || 'Unknown',
+      'Issue Date': new Date(trx.issueDate).toLocaleDateString(),
+      'Due Date': new Date(trx.dueDate).toLocaleDateString(),
+      'Return Date': trx.returnDate ? new Date(trx.returnDate).toLocaleDateString() : 'N/A',
+      'Status': trx.status,
+      'Fine': trx.fine || 0
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+    
+    XLSX.writeFile(workbook, `LMS_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-2xl font-bold text-slate-800">Library Reports</h2>
         
         <div className="flex space-x-3">
-          <button onClick={() => handleExportMock('PDF')} className="flex items-center px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-medium transition-colors border border-red-200">
+          <button onClick={exportToPDF} className="flex items-center px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-medium transition-colors border border-red-200">
             <Download size={18} className="mr-2" /> PDF
           </button>
-          <button onClick={() => handleExportMock('Excel')} className="flex items-center px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-medium transition-colors border border-green-200">
+          <button onClick={exportToExcel} className="flex items-center px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-medium transition-colors border border-green-200">
             <Download size={18} className="mr-2" /> Excel
           </button>
           <button onClick={() => window.print()} className="flex items-center px-4 py-2 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg font-medium transition-colors border border-slate-200">
