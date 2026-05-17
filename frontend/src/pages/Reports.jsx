@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from '../api';
 import { Calendar, Download, Printer, Filter } from 'lucide-react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 const Reports = () => {
@@ -68,7 +68,7 @@ const Reports = () => {
       tableRows.push(transactionData);
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
       startY: 30,
